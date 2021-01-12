@@ -1,7 +1,7 @@
 #include <algorithm>
+#include <cassert>
 #include <iostream>
 #include <numeric>
-#include <queue>
 #include <vector>
 using namespace std;
 
@@ -11,34 +11,25 @@ int main() {
   int tc;
   cin >> tc;
   while ( tc-- ) {
-    int n, m, x;
-    int sum_a = 0;
-    int sum_b = 0;
-    priority_queue<int> B;
-    priority_queue<int, vector<int>, greater<int> > A;
+    int n, m;
     cin >> n >> m;
+    vector<int> A(n), B(m);
+    for ( int &x : A ) cin >> x;
+    for ( int &x : B ) cin >> x;
+    sort(A.begin(), A.end());
+    sort(B.begin(), B.end());
 
-    for ( int i = 0; i < n; ++i ) {
-      cin >> x;
-      sum_a += x;
-      A.push(x);
-    }
-
-    for ( int i = 0; i < m; ++i ) {
-      cin >> x;
-      sum_b += x;
-      B.push(x);
-    }
-
+    int sum_a = accumulate(A.begin(), A.end(), 0);
+    int sum_b = accumulate(B.begin(), B.end(), 0);
+    int ix = 0, jx = m - 1;
     int answer = 0;
 
-    while ( sum_a < sum_b && A.top() < B.top() ) {
-      int a_top = A.top(); A.pop();
-      int b_top = B.top(); B.pop();
-      sum_a = sum_a - a_top + b_top;
-      sum_b = sum_b - b_top + a_top;
-      A.push(b_top);
-      B.push(a_top);
+    while ( ix < n && jx >= 0 && A[ix] < B[jx] && sum_a <= sum_b ) {
+      assert(sum_a > 0);
+      assert(sum_b > 0);
+      sum_a = sum_a - A[ix] + B[jx];
+      sum_b = sum_b - B[jx] + A[ix];
+      ix++; jx--;
       answer++;
     }
 
